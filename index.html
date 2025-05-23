@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>สูตรอาหารเพื่อสุขภาพ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f0f8f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+      position: relative;
+    }
+    .container.active {
+      display: block;
+    }
+    h2 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f44336;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #d32f2f;
+    }
+    .menu-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: nowrap;
+    }
+    .menu {
+      flex: 0 0 calc((100% - 40px) / 3);
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-sizing: border-box;
+    }
+    @media (max-width: 768px) {
+      .menu-row {
+        flex-wrap: wrap;
+      }
+      .menu {
+        flex: 1 1 48%;
+        margin-bottom: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .menu {
+        flex: 1 1 100%;
+      }
+    }
+
+    .menu h3 {
+      font-size: 18px;
+      color: #2e7d32;
+    }
+    .menu img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #388e3c;
+    }
+    .details {
+      display: none;
+      margin-top: 10px;
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    ul { padding-left: 20px; }
+    .info { font-weight: bold; margin-top: 10px; }
+
+    input[type="text"], input[type="password"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- สมัครสมาชิก -->
+<div class="container active" id="registerPage">
+  <h2>สมัครสมาชิก</h2>
+  <input type="text" id="regUsername" placeholder="ชื่อผู้ใช้">
+  <input type="password" id="regPassword" placeholder="รหัสผ่าน">
+  <button onclick="register()">สมัครสมาชิก</button>
+  <div class="link" onclick="showLogin()" style="text-align:center;margin-top:10px;cursor:pointer;color:#00796b">มีบัญชีแล้ว? เข้าสู่ระบบ</div>
+  <div class="error" id="registerError"></div>
+</div>
+
+<!-- ล็อกอิน -->
+<div class="container" id="loginPage">
+  <h2>เข้าสู่ระบบ</h2>
+  <input type="text" id="loginUsername" placeholder="ชื่อผู้ใช้">
+  <input type="password" id="loginPassword" placeholder="รหัสผ่าน">
+  <button onclick="login()">เข้าสู่ระบบ</button>
+  <div class="link" onclick="showRegister()" style="text-align:center;margin-top:10px;cursor:pointer;color:#00796b">ยังไม่มีบัญชี? สมัครสมาชิก</div>
+  <div class="error" id="loginError"></div>
+</div>
+
+<!-- หน้าเมนูอาหาร -->
+<div class="container" id="menuPage">
+  <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+  <h2>สูตรอาหารเพื่อสุขภาพ</h2>
+
+  <!-- ปุ่มและฟอร์มเพิ่มสูตร -->
+  <button onclick="toggleAddForm()">➕ เพิ่มสูตรอาหาร</button>
+  <div id="addForm" style="display:none; margin-top:20px; padding:20px; border:1px solid #ccc; border-radius:10px;">
+    <h3>เพิ่มสูตรอาหารใหม่</h3>
+    <input type="text" id="newTitle" placeholder="ชื่อเมนู">
+    <input type="text" id="newImage" placeholder="ลิงก์รูปภาพ">
+    <textarea id="newDetails" placeholder="รายละเอียดวิธีทำ / ส่วนประกอบ"></textarea>
+    <button onclick="addRecipe()">บันทึกสูตร</button>
+  </div>
+  <div class="menu-row">
+    <!-- เมนู 1 -->
+    <div class="menu">
+      <h3>1. พล่าทูน่า</h3>
+      <img src="https://img.kapook.com/u/2015/surauch/Cook/Clean11.jpg" alt="พล่าทูน่า" />
+      <button onclick="toggleDetails(this)">ดูรายละเอียด</button>
+      <div class="details">
+        <div class="info">⏱️ เวลา: 15 นาที | 🧩 ระดับความยาก: ง่าย</div>
+        <strong>ส่วนประกอบ:</strong>
+        <ul>
+          <li>ทูน่ากระป๋องในน้ำแร่ 1 กระป๋อง</li>
+          <li>หอมแดงซอย 2 หัว</li>
+          <li>พริกขี้หนู 4-5 เม็ด (ซอย)</li>
+          <li>ใบมะกรูดซอย 2 ใบ</li>
+          <li>น้ำมะนาว 2 ช้อนโต๊ะ</li>
+          <li>น้ำปลา 1 ช้อนโต๊ะ</li>
+          <li>ผักสดสำหรับเสิร์ฟ</li>
+        </ul>
+        <strong>วิธีทำ:</strong>
+        <ol>
+          <li>สะเด็ดน้ำทูน่าแล้วใส่ชามผสม</li>
+          <li>เติมหอมแดง พริก ใบมะกรูด</li>
+          <li>ปรุงรสด้วยน้ำมะนาวและน้ำปลา คลุกให้เข้ากัน</li>
+          <li>เสิร์ฟพร้อมผักสด</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- เมนู 2 -->
+    <div class="menu">
+      <h3>2. สลัดเห็ดย่าง</h3>
+      <img src="https://img.kapook.com/u/2015/surauch/Cook/Clean8.jpg" alt="สลัดเห็ดย่าง" />
+      <button onclick="toggleDetails(this)">ดูรายละเอียด</button>
+      <div class="details">
+        <div class="info">⏱️ เวลา: 25 นาที | 🧩 ระดับความยาก: ปานกลาง</div>
+        <strong>ส่วนประกอบ:</strong>
+        <ul>
+          <li>เห็ดออรินจิหรือเห็ดหอมสด 200 กรัม</li>
+          <li>น้ำมันมะกอก 1 ช้อนโต๊ะ</li>
+          <li>เกลือ พริกไทย</li>
+          <li>ผักสลัดรวม 1 ถ้วย</li>
+          <li>น้ำสลัดบัลซามิกหรือน้ำสลัดเลมอน</li>
+        </ul>
+        <strong>วิธีทำ:</strong>
+        <ol>
+          <li>หั่นเห็ดเป็นชิ้นๆ แล้วคลุกกับน้ำมันมะกอก</li>
+          <li>ย่างบนกระทะร้อนจนสุกหอม</li>
+          <li>จัดผักสลัดใส่จาน โรยเห็ดย่างด้านบน</li>
+          <li>ราดด้วยน้ำสลัดก่อนเสิร์ฟ</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- เมนู 3 -->
+    <div class="menu">
+      <h3>3. เค้กกล้วยหอมแป้งโฮลวีต</h3>
+      <img src="https://s359.kapook.com//pagebuilder/35ca175b-6360-4ce1-900f-8d5f39db92d0.jpg" alt="เค้กกล้วยหอมแป้งโฮลวีต" />
+      <button onclick="toggleDetails(this)">ดูรายละเอียด</button>
+      <div class="details">
+        <div class="info">⏱️ เวลา: 45 นาที | 🧩 ระดับความยาก: ปานกลาง</div>
+        <strong>ส่วนประกอบ:</strong>
+        <ul>
+          <li>กล้วยหอมสุกบด 3 ลูก</li>
+          <li>แป้งโฮลวีต 1 ถ้วย</li>
+          <li>ไข่ไก่ 2 ฟอง</li>
+          <li>น้ำผึ้ง 2 ช้อนโต๊ะ</li>
+          <li>ผงฟู 1 ช้อนชา</li>
+          <li>น้ำมันรำข้าว 2 ช้อนโต๊ะ</li>
+        </ul>
+        <strong>วิธีทำ:</strong>
+        <ol>
+          <li>วอร์มเตาอบที่ 175°C</li>
+          <li>ผสมกล้วย ไข่ น้ำผึ้ง และน้ำมันให้เข้ากัน</li>
+          <li>ใส่แป้งและผงฟู ผสมให้เนียน</li>
+          <li>เทใส่พิมพ์และอบประมาณ 35-40 นาที</li>
+          <li>พักให้เย็นก่อนเสิร์ฟ</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleDetails(btn) {
+    const detail = btn.nextElementSibling;
+    if (detail.style.display === "none" || detail.style.display === "") {
+      detail.style.display = "block";
+      btn.textContent = "ซ่อนรายละเอียด";
+    } else {
+      detail.style.display = "none";
+      btn.textContent = "ดูรายละเอียด";
+    }
+  }
+
+  function register() {
+    const u = document.getElementById("regUsername").value.trim();
+    const p = document.getElementById("regPassword").value;
+    const err = document.getElementById("registerError");
+    if (!u || !p) return err.textContent = "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
+    if (localStorage.getItem("user_" + u)) return err.textContent = "ชื่อผู้ใช้นี้มีอยู่แล้ว";
+    localStorage.setItem("user_" + u, p);
+    err.textContent = ""; alert("สมัครสมาชิกสำเร็จ");
+    showLogin();
+  }
+
+  function login() {
+    const u = document.getElementById("loginUsername").value.trim();
+    const p = document.getElementById("loginPassword").value;
+    const err = document.getElementById("loginError");
+    if (!u || !p) return err.textContent = "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
+    const saved = localStorage.getItem("user_" + u);
+    if (saved !== p) return err.textContent = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+    err.textContent = "";
+    localStorage.setItem("currentUser", u);
+    showMenu();
+  }
+
+  function logout() {
+    localStorage.removeItem("currentUser");
+    showLogin();
+  }
+
+  function showRegister() {
+    document.getElementById("registerPage").classList.add("active");
+    document.getElementById("loginPage").classList.remove("active");
+    document.getElementById("menuPage").classList.remove("active");
+  }
+  function showLogin() {
+    document.getElementById("registerPage").classList.remove("active");
+    document.getElementById("loginPage").classList.add("active");
+    document.getElementById("menuPage").classList.remove("active");
+  }
+  function showMenu() {
+    document.getElementById("registerPage").classList.remove("active");
+    document.getElementById("loginPage").classList.remove("active");
+    document.getElementById("menuPage").classList.add("active");
+  }
+  function toggleAddForm() {
+    const form = document.getElementById("addForm");
+    form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+  }
+
+  function addRecipe() {
+    const title = document.getElementById("newTitle").value.trim();
+    const img = document.getElementById("newImage").value.trim();
+    const details = document.getElementById("newDetails").value.trim();
+
+    if (!title || !img || !details) {
+      alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      return;
+    }
+    const container = document.querySelector(".menu-row");
+    const count = container.children.length + 1;
+
+    const div = document.createElement("div");
+    div.className = "menu";
+
+    div.innerHTML = `
+      <h3>${count}. ${title}</h3>
+      <img src="${img}" alt="${title}" />
+      <button onclick="toggleDetails(this)">ดูรายละเอียด</button>
+      <div class="details">
+        <div class="info">⏱️ เวลา: - | 🧩 ระดับความยาก: -</div>
+        ${formatDetails(details)}
+      </div>
+    `;
+    container.appendChild(div);
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newImage").value = "";
+    document.getElementById("newDetails").value = "";
+    toggleAddForm();
+  }
+
+  function formatDetails(text) {
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+    let html = '<ul>';
+    lines.forEach(line => {
+      html += `<li>${line}</li>`;
+    });
+    html += '</ul>';
+    return html;
+  }
+  window.onload = () => {
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      showMenu();
+    } else {
+      showRegister();
+    }
+  }
+</script>
+
+</body>
+</html>
